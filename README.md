@@ -1,1 +1,4 @@
-# scroll-driven-animations
+# Scroll-driven animations
+
+## Пример анимаций основанных на прокрутке
+- Прогрес-бар
