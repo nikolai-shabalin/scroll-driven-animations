@@ -76,6 +76,7 @@ Web Animations [\[WEB-ANIMATIONS-1\]](#biblio-web-animations-1 "Web Animations")
 **y**
 
 Указывает на использование меры прогресса вдоль [вертикальной оси](https://www.w3.org/TR/css-writing-modes-4/#y-axis) [контейнера прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container).
+
 **nearest**
 
 Указывает на использование ближайшего предка [контейнера прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container). (По умолчанию.)
@@ -166,7 +167,7 @@ ScrollTimeline - это `[AnimationTimeline](https://www.w3.org/TR/web-animation
 
 ### 2.3. Named Scroll Progress Timelines
 
-[Scroll-progress-timelines] (#scroll-progress-timelines) также может быть определен на самом [scroll container] (https://www.w3.org/TR/css-overflow-3/#scroll-container), а затем по имени обращаться к элементам в области видимости этого имени (см. [§ 4.2 Named Timeline Scoping and Lookup] (#timeline-scoping)]).
+[Scroll-progress-timelines] (#scroll-progress-timelines) также может быть определен на самом [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container), а затем по имени обращаться к элементам в области видимости этого имени (см. [§ 4.2 Named Timeline Scoping and Lookup](#timeline-scoping)]).
 
 Такие именованные временные шкалы прокрутки объявляются в [согласованном списке значений](https://www.w3.org/TR/css-values-4/#coordinated-value-list), построенном из [длинных](https://www.w3.org/TR/css-cascade-5/#longhand) [сокращенных](https://www.w3.org/TR/css-cascade-5/#shorthand-property) свойств [scroll-timeline](#propdef-scroll-timeline), которые образуют группу свойств [согласованного списка](https://www.w3.org/TR/css-values-4/#coordinating-list-property) с [scroll-timeline-name](#propdef-scroll-timeline-name) в качестве базового свойства [согласованного списка](https://www.w3.org/TR/css-values-4/#coordinating-list-base-property). См. [CSS Values 4 § A Coordinating List-Valued Properties](https://www.w3.org/TR/css-values-4/#linked-properties).
 
@@ -226,118 +227,114 @@ ScrollTimeline - это `[AnimationTimeline](https://www.w3.org/TR/web-animation
 ## 3. View Progress Timelines
 ----------------------------------------------
 
-Often animations are desired to start and end during the portion of the [scroll progress timeline](#scroll-progress-timelines) that a particular box (the view progress subject) is in view within the [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport). View progress timelines are segments of a scroll progress timeline that are scoped to the scroll positions in which any part of the subject element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) intersects its nearest ancestor scrollport (or more precisely, the relevant [view progress visibility range](#view-progress-visibility-range) of that scrollport). The startmost such scroll position represents 0% progress, and the endmost such scroll position represents 100% progress; see [§ 3.2 Calculating Progress for a View Progress Timeline](#view-timeline-progress).
+Часто требуется, чтобы анимация начиналась и заканчивалась в тот отрезок времени [scroll progress timeline](#scroll-progress-timelines), когда определенный бокс (субъект прокрутки) находится в поле зрения [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport). Временные шкалы прокрутки - это сегменты временной шкалы прокрутки, которые привязаны к позициям прокрутки, в которых любая часть [основного бокса] элемента [https://www.w3.org/TR/css-display-3/#principal-box] пересекает ближайший предшествующий скроллпорт (точнее, соответствующий диапазон видимости [view progress visibility range](#view-progress-visibility-range) этого скроллпорта). Самая начальная позиция прокрутки представляет собой 0% прогресса, а самая конечная - 100% прогресса; смотрите [§ 3.2 Расчет прогресса для временной шкалы прогресса](#view-timeline-progress).
 
-Note: The 0% and 100% scroll positions are not always reachable, e.g. if the box is positioned at the start edge of the [scrollable overflow rectangle](https://www.w3.org/TR/css-overflow-3/#scrollable-overflow-rectangle), it might not be possible to scroll to < 32% progress.
+Примечание: Позиции прокрутки 0% и 100% не всегда достижимы, например, если окно расположено у начального края [scrollable overflow rectangle](https://www.w3.org/TR/css-overflow-3/#scrollable-overflow-rectangle), то прокрутка до прогресса < 32% может оказаться невозможной.
 
-[View progress timelines](#view-progress-timelines) can be referenced anonymously using the [view()](#funcdef-view) [functional notation](https://www.w3.org/TR/css-values-4/#functional-notation) or by name (see [§ 4.2 Named Timeline Scoping and Lookup](#timeline-scoping)) after declaring them using the [view-timeline](#propdef-view-timeline) properties on the [view progress subject](#view-progress-subject). In the Web Animations API, they can be represented anonymously by a `[ViewTimeline](#viewtimeline)` object.
+На [View progress timelines](#view-progress-timelines) можно ссылаться анонимно, используя [view()](#funcdef-view) [функциональную нотацию](https://www.w3.org/TR/css-values-4/#functional-notation) или по имени (см. [§ 4.2 Named Timeline Scoping and Lookup](#timeline-scoping)) после объявления их с помощью свойств [view-timeline](#propdef-view-timeline) на [view progress subject](#view-progress-subject). В Web Animations API они могут быть представлены анонимно объектом `[ViewTimeline](#viewtimeline)`.
 
-### 3.1. View Progress Timeline Ranges[](#view-timelines-ranges)
+### 3.1. Просмотр диапазонов временной шкалы прогресса
 
-[View progress timelines](#view-progress-timelines) define the following [named timeline ranges](#named-timeline-range):
+[View progress timelines](#view-progress-timelines) определяют следующие [named timeline ranges](#named-timeline-range):
 
 cover
 
-Represents the full range of the [view progress timeline](#view-progress-timelines):
+Представляет собой полный диапазон [view progress timeline](#view-progress-timelines):
 
-*   0% progress represents the latest position at which the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the [end](https://dom.spec.whatwg.org/#concept-range-end) edge of its [view progress visibility range](#view-progress-visibility-range).
+* 0% прогресса представляет собой самую позднюю позицию, в которой [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с [концом](https://dom.spec.whatwg.org/#concept-range-end) края его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
-*   100% progress represents the earliest position at which the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the [start](https://dom.spec.whatwg.org/#concept-range-start) edge of its [view progress visibility range](#view-progress-visibility-range).
+* 100% прогресс представляет собой самое раннее положение, при котором [конец](https://dom.spec.whatwg.org/#concept-range-end) [граничного края](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с [началом](https://dom.spec.whatwg.org/#concept-range-start) края его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
 
 contain
 
-Represents the range during which the [principal box](https://www.w3.org/TR/css-display-3/#principal-box) is either fully contained by, or fully covers, its [view progress visibility range](#view-progress-visibility-range) within the [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport).
+Представляет собой диапазон, в котором [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) либо полностью содержится, либо полностью перекрывает свой [диапазон видимости прогресса просмотра](#view-progress-visibility-range) в пределах [области прокрутки](https://www.w3.org/TR/css-overflow-3/#scrollport).
 
-*   0% progress represents the earliest position at which either:
+* 0 % прогресса - это самое раннее положение, в котором либо:
 
-    *   the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the start edge of its [view progress visibility range](#view-progress-visibility-range).
+    * [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с начальным краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
-    *   the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the end edge of its [view progress visibility range](#view-progress-visibility-range).
+    * [конец](https://dom.spec.whatwg.org/#concept-range-end) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с крайним краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
-*   100% progress represents the latest position at which either:
+    * 100%-ный прогресс представляет собой последнюю позицию, в которой либо:
 
-    *   the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the start edge of its [view progress visibility range](#view-progress-visibility-range).
+    * [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного бокса](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с начальным краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
-    *   the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the end edge of its [view progress visibility range](#view-progress-visibility-range).
-
-
-entry[](#valdef-animation-timeline-range-entry)
-
-Represents the range during which the [principal box](https://www.w3.org/TR/css-display-3/#principal-box) is entering the [view progress visibility range](#view-progress-visibility-range).
-
-*   0% is equivalent to 0% of the [cover](#valdef-animation-timeline-range-cover) range.
-
-*   100% is equivalent to 0% of the [contain](#valdef-animation-timeline-range-contain) range.
+    * [конец](https://dom.spec.whatwg.org/#concept-range-end) [граничный край](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с конечным краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
 
-exit[](#valdef-animation-timeline-range-exit)
+entry
 
-Represents the range during which the [principal box](https://www.w3.org/TR/css-display-3/#principal-box) is exiting the [view progress visibility range](#view-progress-visibility-range).
+Представляет собой диапазон, в котором [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) входит в [диапазон видимости прогресса просмотра](#view-progress-visibility-range).
 
-*   0% is equivalent to 100% of the [contain](#valdef-animation-timeline-range-contain) range.
+* 0% эквивалентно 0% диапазона [cover](#valdef-animation-timeline-range-cover).
 
-*   100% is equivalent to 100% of the [cover](#valdef-animation-timeline-range-cover) range.
+* 100% эквивалентно 0% диапазона [contain](#valdef-animation-timeline-range-contain).
 
+exit
 
-entry-crossing[](#valdef-animation-timeline-range-entry-crossing)
+Представляет собой диапазон, в котором [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) выходит из [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
 
-Represents the range during which the [principal box](https://www.w3.org/TR/css-display-3/#principal-box) crosses the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge)
+* 0% эквивалентно 100% диапазона [contain](#valdef-animation-timeline-range-contain).
 
-*   0% progress represents the latest position at which the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the [end](https://dom.spec.whatwg.org/#concept-range-end) edge of its [view progress visibility range](#view-progress-visibility-range).
-
-*   100% progress represents the earliest position at which the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the end edge of its [view progress visibility range](#view-progress-visibility-range).
-
-
-exit-crossing[](#valdef-animation-timeline-range-exit-crossing)
-
-Represents the range during which the [principal box](https://www.w3.org/TR/css-display-3/#principal-box) crosses the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge)
-
-*   0% progress represents the latest position at which the [start](https://dom.spec.whatwg.org/#concept-range-start) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the start edge of its [view progress visibility range](#view-progress-visibility-range).
-
-*   100% progress represents the earliest position at which the [end](https://dom.spec.whatwg.org/#concept-range-end) [border edge](https://www.w3.org/TR/css-box-4/#border-edge) of the element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box) coincides with the [start](https://dom.spec.whatwg.org/#concept-range-start) edge of its [view progress visibility range](#view-progress-visibility-range).
+* 100% эквивалентно 100% диапазона [cover](#valdef-animation-timeline-range-cover).
 
 
-[](#issue-aab79dad)Insert diagrams.
+entry-crossing
 
-In all cases, the [writing mode](https://www.w3.org/TR/css-writing-modes-4/#writing-mode) used to resolve the [start](https://dom.spec.whatwg.org/#concept-range-start) and [end](https://dom.spec.whatwg.org/#concept-range-end) sides is the writing mode of the relevant [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container). [Transforms](https://www.w3.org/TR/css-transforms/) are ignored, but [relative](https://www.w3.org/TR/CSS21/visuren.html#x34) and [absolute](https://www.w3.org/TR/css-position-3/#absolute-position) positioning are accounted for.
+Представляет собой диапазон, в котором [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) пересекает [конец](https://dom.spec.whatwg.org/#concept-range-end) [край границы](https://www.w3.org/TR/css-box-4/#border-edge)
 
-Note: For [sticky-positioned boxes](https://www.w3.org/TR/css-position-3/#sticky-position) the 0% and 100% progress conditions can sometimes be satisfied by a range of scroll positions rather than just one. Each range therefore indicates whether to use the earliest or latest qualifying position.
+* 0% прогресса представляет собой последнюю позицию, в которой [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с [концом](https://dom.spec.whatwg.org/#concept-range-end) края его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
+
+* 100% прогресс представляет собой самое раннее положение, при котором [конец](https://dom.spec.whatwg.org/#concept-range-end) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с конечным краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
+
+
+exit-crossing
+
+Представляет собой диапазон, в котором [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) пересекает [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge).
+
+* 0% прогресса - это самое позднее положение, при котором [начало](https://dom.spec.whatwg.org/#concept-range-start) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с начальным краем его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
+
+* 100% прогресс представляет собой самое раннее положение, при котором [конец](https://dom.spec.whatwg.org/#concept-range-end) [край границы](https://www.w3.org/TR/css-box-4/#border-edge) [основного поля](https://www.w3.org/TR/css-display-3/#principal-box) элемента совпадает с [началом](https://dom.spec.whatwg.org/#concept-range-start) края его [диапазона видимости прогресса просмотра](#view-progress-visibility-range).
+
+
+> Insert diagrams.
+
+Во всех случаях для разрешения сторон [начало](https://dom.spec.whatwg.org/#concept-range-start) и [конец](https://dom.spec.whatwg.org/#concept-range-end) используется режим записи соответствующего [контейнера прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container). [Трансформации](https://www.w3.org/TR/css-transforms/) игнорируются, но учитывается [относительное](https://www.w3.org/TR/CSS21/visuren.html#x34) и [абсолютное](https://www.w3.org/TR/css-position-3/#absolute-position) позиционирование.
+
+> Примечание: Для [sticky-positioned boxes](https://www.w3.org/TR/css-position-3/#sticky-position) условия 0% и 100% прогресса иногда могут быть удовлетворены не одним, а целым рядом позиций прокрутки. Поэтому в каждом диапазоне указывается, какую позицию следует использовать - самую раннюю или самую позднюю.
 
 [\[CSS-POSITION-3\]](#biblio-css-position-3 "CSS Positioned Layout Module Level 3") [\[CSS-TRANSFORMS-1\]](#biblio-css-transforms-1 "CSS Transforms Module Level 1")
 
-### 3.2. Calculating Progress for a View Progress Timeline[](#view-timeline-progress)
+### 3.2. Вычисление прогресса для временной шкалы прогресса
 
-Progress (the [current time](https://www.w3.org/TR/web-animations-1/#timeline-current-time)) in a [view progress timeline](#view-progress-timelines) is calculated as: distance ÷ range where:
+Прогресс ([текущее время](https://www.w3.org/TR/web-animations-1/#timeline-current-time)) в шкале времени [view progress timeline](#view-progress-timelines) вычисляется как: расстояние ÷ диапазон, где:
 
-*   distance is the current [scroll offset](https://www.w3.org/TR/css-overflow-3/#scroll-offset) minus the scroll offset corresponding to the start of the [cover](#valdef-animation-timeline-range-cover) range
+* расстояние - это текущее [смещение прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-offset) минус смещение прокрутки, соответствующее началу диапазона [cover](#valdef-animation-timeline-range-cover)
 
-*   range is the [scroll offset](https://www.w3.org/TR/css-overflow-3/#scroll-offset) corresponding to the start of the [cover](#valdef-animation-timeline-range-cover) range minus the scroll offset corresponding to the end of the cover range
+* range - это [scroll offset](https://www.w3.org/TR/css-overflow-3/#scroll-offset), соответствующее началу диапазона [cover](#valdef-animation-timeline-range-cover), минус scroll offset, соответствующее концу диапазона cover
 
+Если позиции 0% и 100% совпадают (т.е. знаменатель в формуле [current time](https://www.w3.org/TR/web-animations-1/#timeline-current-time) равен нулю), то временная шкала является [неактивной](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
 
-If the 0% position and 100% position coincide (i.e. the denominator in the [current time](https://www.w3.org/TR/web-animations-1/#timeline-current-time) formula is zero), the timeline is [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+В [paged media](https://www.w3.org/TR/mediaqueries-5/#paged-media) временные шкалы [view progress timelines](#view-progress-timelines), которые в противном случае ссылались бы на область просмотра документа, также являются [неактивными](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
 
-In [paged media](https://www.w3.org/TR/mediaqueries-5/#paged-media), [view progress timelines](#view-progress-timelines) that would otherwise reference the document viewport are also [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+### 3.3. Анонимный просмотр графиков выполнения работ
 
-### 3.3. Anonymous View Progress Timelines[](#view-timelines-anonymous)
+#### 3.3.1. Нотация [view()](#funcdef-view)
 
-#### 3.3.1. The [view()](#funcdef-view) notation[](#view-notation)
-
-The view() functional notation can be used as a [<single-animation-timeline>](https://www.w3.org/TR/css-animations-2/#typedef-single-animation-timeline "Expands to: auto | none") value in [animation-timeline](https://www.w3.org/TR/css-animations-2/#propdef-animation-timeline) and specifies a [view progress timeline](#view-progress-timelines) in reference to the nearest ancestor [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container). Its syntax is
+Функциональная нотация view() может использоваться в качестве значения [<single-animation-timeline>](https://www.w3.org/TR/css-animations-2/#typedef-single-animation-timeline "Expands to: auto | none") в [animation-timeline](https://www.w3.org/TR/css-animations-2/#propdef-animation-timeline) и задает [view progress timeline](#view-progress-timelines) по отношению к ближайшему предку [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container). Его синтаксис таков
 
 ```
 <view()> = view( [ <axis> || <'view-timeline-inset'> ]? )
-
 ```
 
+По умолчанию [view()](#funcdef-view) ссылается на [ось блока](https://www.w3.org/TR/css-writing-modes-4/#block-axis); как и для [scroll()](#funcdef-scroll), это можно изменить, указав явное значение [<axis>](#typedef-axis).
 
-By default, [view()](#funcdef-view) references the [block axis](https://www.w3.org/TR/css-writing-modes-4/#block-axis); as for [scroll()](#funcdef-scroll), this can be changed by providing an explicit [<axis>](#typedef-axis) value.
+Необязательное значение [<'view-timeline-inset'>](#propdef-view-timeline-inset) обеспечивает настройку диапазона видимости [view progress visibility-range](#view-progress-visibility-range), как определено для view-timeline-inset.
 
-The optional [<'view-timeline-inset'>](#propdef-view-timeline-inset) value provides an adjustment of the [view progress visibility range](#view-progress-visibility-range), as defined for view-timeline-inset.
+Каждое использование [view()](#funcdef-view) соответствует собственному экземпляру `[ViewTimeline](#viewtimeline)` в Web Animations API, даже если несколько элементов используют view() для ссылки на один и тот же элемент с одинаковыми аргументами.
 
-Each use of [view()](#funcdef-view) corresponds to its own instance of `[ViewTimeline](#viewtimeline)` in the Web Animations API, even if multiple elements use view() to reference the same element with the same arguments.
-
-#### 3.3.2. The `[ViewTimeline](#viewtimeline)` Interface[](#viewtimeline-interface)
+#### 3.3.2. Интерфейс `[ViewTimeline](#viewtimeline)`.
 
 ```
 dictionary ViewTimelineOptions {
@@ -356,64 +353,60 @@ interface ViewTimeline : ScrollTimeline {
 
 ```
 
+В качестве `[ViewTimeline](#viewtimeline)` выступает `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)`, задающий временную шкалу [view progress timeline](#view-progress-timelines). Его можно передать конструктору `[Animation](https://www.w3.org/TR/web-animations-1/#animation)` или методу `[animate()](https://www.w3.org/TR/web-animations-1/#dom-animatable-animate)`, чтобы связать анимацию с временной шкалой прогресса просмотра.
 
-A `[ViewTimeline](#viewtimeline)` is an `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)` that specifies a [view progress timeline](#view-progress-timelines). It can be passed to the `[Animation](https://www.w3.org/TR/web-animations-1/#animation)` constructor or the `[animate()](https://www.w3.org/TR/web-animations-1/#dom-animatable-animate)` method to link the animation to a view progress timeline.
+`subject`, типа [Element](https://dom.spec.whatwg.org/#element), readonly
 
-`subject`, of type [Element](https://dom.spec.whatwg.org/#element), readonly
+Элемент, видимость которого [principal box](https://www.w3.org/TR/css-display-3/#principal-box) в [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport) определяет ход временной шкалы.
 
-The element whose [principal box](https://www.w3.org/TR/css-display-3/#principal-box)’s visibility in the [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport) defines the progress of the timeline.
+`startOffset`, типа [CSSNumericValue](https://www.w3.org/TR/css-typed-om-1/#cssnumericvalue), readonly
 
-`startOffset`, of type [CSSNumericValue](https://www.w3.org/TR/css-typed-om-1/#cssnumericvalue), readonly
+Представляет начальную (0% прогресса) позицию прокрутки [view progress timeline](#view-progress-timelines) в виде смещения длины (в [px](https://www.w3.org/TR/css-values-4/#px)) от [scroll origin](https://www.w3.org/TR/css-overflow-3/#scroll-origin). Null, если временная шкала [неактивна](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
 
-Represents the starting (0% progress) scroll position of the [view progress timeline](#view-progress-timelines) as a length offset (in [px](https://www.w3.org/TR/css-values-4/#px)) from the [scroll origin](https://www.w3.org/TR/css-overflow-3/#scroll-origin). Null when the timeline is [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+`endOffset`, типа [CSSNumericValue](https://www.w3.org/TR/css-typed-om-1/#cssnumericvalue), readonly
 
-`endOffset`, of type [CSSNumericValue](https://www.w3.org/TR/css-typed-om-1/#cssnumericvalue), readonly
+Представляет конечную (100% прогресса) позицию прокрутки [view progress timeline](#view-progress-timelines) в виде смещения по длине (в [px](https://www.w3.org/TR/css-values-4/#px)) от [scroll origin](https://www.w3.org/TR/css-overflow-3/#scroll-origin). Null, если временная шкала [неактивна](https://www.w3.org/TR/web-animations-1/#inactive-timeline)..
 
-Represents the ending (100% progress) scroll position of the [view progress timeline](#view-progress-timelines) as a length offset (in [px](https://www.w3.org/TR/css-values-4/#px)) from the [scroll origin](https://www.w3.org/TR/css-overflow-3/#scroll-origin). Null when the timeline is [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+> Примечание: Значения `[startOffset](#dom-viewtimeline-startoffset)` и `[endOffset](#dom-viewtimeline-endoffset)` относятся к [началу прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-origin), а не к [физическому](https://www.w3.org/TR/css-writing-modes-4/#physical) левому верхнему углу. Поэтому в зависимости от [режима записи](https://www.w3.org/TR/css-writing-modes-4/#writing-mode) [контейнера прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container) они могут не совпадать со значениями `[scrollLeft](https://www.w3.org/TR/cssom-view-1/#dom-element-scrollleft)` или `[scrollTop](https://www.w3.org/TR/cssom-view-1/#dom-element-scrolltop)`, например, по [горизонтальной оси](https://www.w3.org/TR/css-writing-modes-4/#x-axis) в режиме записи справа налево ([rtl](https://www.w3.org/TR/css-writing-modes-4/#valdef-direction-rtl)).
 
-Note: The values of `[startOffset](#dom-viewtimeline-startoffset)` and `[endOffset](#dom-viewtimeline-endoffset)` are relative to the [scroll origin](https://www.w3.org/TR/css-overflow-3/#scroll-origin), not the [physical](https://www.w3.org/TR/css-writing-modes-4/#physical) top left corner. Depending on the [writing mode](https://www.w3.org/TR/css-writing-modes-4/#writing-mode) of the [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container), they therefore might not match `[scrollLeft](https://www.w3.org/TR/cssom-view-1/#dom-element-scrollleft)` or `[scrollTop](https://www.w3.org/TR/cssom-view-1/#dom-element-scrolltop)` values, for example in the [horizontal axis](https://www.w3.org/TR/css-writing-modes-4/#x-axis) in a right-to-left ([rtl](https://www.w3.org/TR/css-writing-modes-4/#valdef-direction-rtl)) writing mode.
+Наследуемые атрибуты:
 
-Inherited attributes:
+`source` (наследуется от `[ScrollTimeline](#scrolltimeline)`)
 
-`[source](#dom-scrolltimeline-source)` (inherited from `[ScrollTimeline](#scrolltimeline)`)
+Ближайший предок `[subject](#dom-viewtimeline-subject)`, чей [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) устанавливает [контейнер прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container), позиция прокрутки которого управляет ходом временной шкалы.
 
-The nearest ancestor of the `[subject](#dom-viewtimeline-subject)` whose [principal box](https://www.w3.org/TR/css-display-3/#principal-box) establishes a [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container), whose scroll position drives the progress of the timeline.
+`axis` (наследуется от `[ScrollTimeline](#scrolltimeline)`)
 
-`[axis](#dom-scrolltimeline-axis)` (inherited from `[ScrollTimeline](#scrolltimeline)`)
+Определяет ось прокрутки, по которой движется временная шкала. См. раздел [<axis>](#typedef-axis), выше.
 
-Specifies the axis of scrolling that drives the progress of the timeline. See [<axis>](#typedef-axis), above.
-
-`[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` (inherited from `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)`)
-
-Represents the current progress of the [view progress timeline](#view-progress-timelines) as a percentage `[CSSUnitValue](https://www.w3.org/TR/css-typed-om-1/#cssunitvalue)` representing its [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container)’s scroll progress at that position. Null when the timeline is [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+`currentTime` (наследуется от `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)`)
+Представляет текущий прогресс [view progress timeline](#view-progress-timelines) в процентах `[CSSUnitValue](https://www.w3.org/TR/css-typed-om-1/#cssunitvalue)`, отражающий прогресс прокрутки его [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container) в данной позиции. Null, если временная шкала [неактивна](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
 
 `ViewTimeline(options)`
 
-Creates a new `[ViewTimeline](#viewtimeline)` object using the following procedure:
+Создает новый объект `[ViewTimeline](#viewtimeline)` с помощью следующей процедуры:
 
-1.  Let timeline be the new `[ViewTimeline](#viewtimeline)` object.
+1.  Пусть timeline - новый объект `[ViewTimeline](#viewtimeline)`.
 
-2.  Set the `[subject](#dom-viewtimeline-subject)` and `[axis](#dom-scrolltimeline-axis)` properties of timeline to the corresponding values from options.
+2.  Установите для свойств `[subject](#dom-viewtimeline-subject)` и `[axis](#dom-scrolltimeline-axis)` timeline соответствующие значения из опций.
 
-3.  Set the `[source](#dom-scrolltimeline-source)` of timeline to the `[subject](#dom-viewtimeline-subject)`’s nearest ancestor [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container) element.
+3.  Установите для свойства `[source](#dom-scrolltimeline-source)` временной шкалы значение `[subject](#dom-viewtimeline-subject)` ближайшего предка элемента [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container).
 
-4.  If a `[DOMString](https://webidl.spec.whatwg.org/#idl-DOMString)` value is provided as an inset, parse it as a [<'view-timeline-inset'>](#propdef-view-timeline-inset) value; if a sequence is provided, the first value represents the start inset and the second value represents the end inset. If the sequence has only one value, it is duplicated. If it has zero values or more than two values, or if it contains a `[CSSKeywordValue](https://www.w3.org/TR/css-typed-om-1/#csskeywordvalue)` whose `[value](https://www.w3.org/TR/css-typed-om-1/#dom-csskeywordvalue-value)` is not "auto", throw a TypeError.
+4.  Если в качестве вставки предоставлено значение `[DOMString](https://webidl.spec.whatwg.org/#idl-DOMString)`, то оно разбирается как значение [<'view-timeline-inset'>](#propdef-view-timeline-inset); если предоставлена последовательность, то первое значение представляет собой начальную вставку, а второе - конечную. Если последовательность имеет только одно значение, то оно дублируется. Если она содержит нулевое значение или более двух значений, или если она содержит `[CSSKeywordValue](https://www.w3.org/TR/css-typed-om-1/#csskeywordvalue)`, чье `[value](https://www.w3.org/TR/css-typed-om-1/#dom-csskeywordvalue-value)` не является "auto", следует выбросить ошибку TypeError.
 
-    These insets define the `[ViewTimeline](#viewtimeline)`’s [view progress visibility range](#view-progress-visibility-range).
+    Эти вставки определяют диапазон видимости `[ViewTimeline](#viewtimeline)` [view progress visibility range](#view-progress-visibility-range).
 
+Если `[источник](#dom-scrolltimeline-source)` или `[субъект](#dom-viewtimeline-subject)` элемента `[ViewTimeline](#viewtimeline)` является элементом, [основной блок](https://www.w3.org/TR/css-display-3/#principal-box) которого не существует, или если его ближайший предок [контейнер прокрутки](https://www.w3.org/TR/css-overflow-3/#scroll-container) не имеет [scrollable overflow](https://www.w3.org/TR/css-overflow-3/#scrollable-overflow) (или если такого предка не существует, например, в печатных СМИ), то `[ViewTimeline](#viewtimeline)` является [неактивным](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
 
-If the `[source](#dom-scrolltimeline-source)` or `[subject](#dom-viewtimeline-subject)` of a `[ViewTimeline](#viewtimeline)` is an element whose [principal box](https://www.w3.org/TR/css-display-3/#principal-box) does not exist, or if its nearest ancestor [scroll container](https://www.w3.org/TR/css-overflow-3/#scroll-container) has no [scrollable overflow](https://www.w3.org/TR/css-overflow-3/#scrollable-overflow) (or if there is no such ancestor, e.g. in print media), then the `[ViewTimeline](#viewtimeline)` is [inactive](https://www.w3.org/TR/web-animations-1/#inactive-timeline).
+Значения `[subject](#dom-viewtimeline-subject)`, `[source](#dom-scrolltimeline-source)` и `[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` вычисляются при запросе или обновлении любого из них.
 
-The values of `[subject](#dom-viewtimeline-subject)`, `[source](#dom-scrolltimeline-source)`, and `[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` are all computed when any of them is requested or updated.
+### 3.4. Именованные графики выполнения работ
 
-### 3.4. Named View Progress Timelines[](#view-timelines-named)
+[View progress timelines](#view-progress-timelines) также могут быть определены декларативно, а затем на них могут ссылаться по имени элементы в области видимости этого имени (см. [§ 4.2 Named Timeline Scoping and Lookup](#timeline-scoping)]).
 
-[View progress timelines](#view-progress-timelines) can also be defined declaratively and then referenced by name by elements within the name’s scope (see [§ 4.2 Named Timeline Scoping and Lookup](#timeline-scoping)).
+Такие именованные временные шкалы выполнения вида объявляются в [согласованном списке значений](https://www.w3.org/TR/css-values-4/#coordinated-value-list), построенном из свойств view-timeline-\*, которые образуют группу свойств [согласованного списка](https://www.w3.org/TR/css-values-4/#coordinating-list-property) с [view-timeline-name](#propdef-view-timeline-name) в качестве базового свойства [согласованного списка](https://www.w3.org/TR/css-values-4/#coordinating-list-base-property). См. [CSS Values 4 § A Coordinating List-Valued Properties](https://www.w3.org/TR/css-values-4/#linked-properties).
 
-Such named view progress timelines are declared in the [coordinated value list](https://www.w3.org/TR/css-values-4/#coordinated-value-list) constructed from the view-timeline-\* properties, which form a [coordinating list property group](https://www.w3.org/TR/css-values-4/#coordinating-list-property) with [view-timeline-name](#propdef-view-timeline-name) as the [coordinating list base property](https://www.w3.org/TR/css-values-4/#coordinating-list-base-property). See [CSS Values 4 § A Coordinating List-Valued Properties](https://www.w3.org/TR/css-values-4/#linked-properties).
-
-#### 3.4.1. Naming a View Progress Timeline: the [view-timeline-name](#propdef-view-timeline-name) property[](#view-timeline-name)
-
+#### 3.4.1. Именование временной шкалы прогресса представления: свойство [view-timeline-name](#propdef-view-timeline-name)
 
 |Name:                 |view-timeline-name                                 |
 |----------------------|---------------------------------------------------|
@@ -426,11 +419,9 @@ Such named view progress timelines are declared in the [coordinated value list](
 |Canonical order:      |per grammar                                        |
 |Animation type:       |not animatable                                     |
 
+Определяет имена для [named view progress timelines](#named-view-progress-timelines), связанных с этим элементом.
 
-Specifies names for the [named view progress timelines](#named-view-progress-timelines) associated with this element.
-
-#### 3.4.2. Axis of a View Progress Timeline: the [view-timeline-axis](#propdef-view-timeline-axis) property[](#view-timeline-axis)
-
+#### 3.4.2. Ось временной шкалы представления: свойство [view-timeline-axis](#propdef-view-timeline-axis)
 
 |Name:                 |view-timeline-axis                    |
 |----------------------|--------------------------------------|
@@ -443,14 +434,11 @@ Specifies names for the [named view progress timelines](#named-view-progress-tim
 |Canonical order:      |per grammar                           |
 |Animation type:       |not animatable                        |
 
+Определяет ось любого [named view progress timelines](#named-view-progress-timelines), полученного из [principal box](https://www.w3.org/TR/css-display-3/#principal-box) этого элемента.
 
-Specifies the axis of any [named view progress timelines](#named-view-progress-timelines) derived from this element’s [principal box](https://www.w3.org/TR/css-display-3/#principal-box).
+Значения определяются для [view()](#funcdef-view).
 
-Values are as defined for [view()](#funcdef-view).
-
-#### 3.4.3. Inset of a View Progress Timeline: the [view-timeline-inset](#propdef-view-timeline-inset) property[](#view-timeline-inset)
-
-
+#### 3.4.3. Вставка временной шкалы представления: свойство [view-timeline-inset](#propdef-view-timeline-inset)
 
 * Name:      : Value:
     * view-timeline-inset     : [ [ auto | <length-percentage> ]{1,2} ]#
@@ -470,17 +458,17 @@ Values are as defined for [view()](#funcdef-view).
     * view-timeline-inset     : by computed value type
 
 
-Specifies an inset (positive) or outset (negative) adjustment of the [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport) when determining whether the box is in view when setting the bounds of the corresponding [view progress timeline](#view-progress-timelines). The first value represents the [start](https://dom.spec.whatwg.org/#concept-range-start) inset in the relevant axis; the second value represents the [end](https://dom.spec.whatwg.org/#concept-range-end) inset. If the second value is omitted, it is set to the first. The resulting range of the scrollport is the view progress visibility range.
+Задает настройку [scrollport](https://www.w3.org/TR/css-overflow-3/#scrollport) на впуск (положительную) или выпуск (отрицательную) при определении того, находится ли бокс в поле зрения при установке границ соответствующей [view progress timeline](#view-progress-timelines). Первое значение представляет собой [начальный](https://dom.spec.whatwg.org/#concept-range-start) отступ по соответствующей оси; второе значение - [конечный](https://dom.spec.whatwg.org/#concept-range-end) отступ. Если второе значение опущено, то оно устанавливается равным первому. Полученный диапазон области прокрутки является диапазоном видимости прогресса просмотра.
 
-auto
+**auto**
 
-Indicates to use the value of [scroll-padding](https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding).
+Указывает на использование значения параметра [scroll-padding](https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding).
 
-[<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)[](#valdef-view-timeline-inset-length-percentage)
+[<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)
 
-Like [scroll-padding](https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding), defines an inward offset from the corresponding edge of the scrollport.
+Как и [scroll-padding](https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-padding), задает смещение внутрь от соответствующего края области прокрутки.
 
-#### 3.4.4. View Timeline Shorthand: the [view-timeline](#propdef-view-timeline) shorthand[](#view-timeline-shorthand)
+#### 3.4.4. Сокращение временной шкалы просмотра: сокращение [view-timeline](#propdef-view-timeline)
 
 
 |Name:                 |view-timeline                                            |
@@ -495,41 +483,39 @@ Like [scroll-padding](https://www.w3.org/TR/css-scroll-snap-1/#propdef-scroll-pa
 |Canonical order:      |per grammar                                              |
 
 
-This property is a [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property) for setting [view-timeline-name](#propdef-view-timeline-name) and [view-timeline-axis](#propdef-view-timeline-axis) in a single declaration. It does not set [view-timeline-inset](#propdef-view-timeline-inset).
+Это свойство является [сокращением](https://www.w3.org/TR/css-cascade-5/#shorthand-property) для установки [view-timeline-name](#propdef-view-timeline-name) и [view-timeline-axis](#propdef-view-timeline-axis) в одном объявлении. Он не задает [view-timeline-inset](#propdef-view-timeline-inset).
 
-[](#issue-6b6d7174)Should it reset [view-timeline-inset](#propdef-view-timeline-inset) also?
+> Должно ли оно также сбрасывать [view-timeline-inset](#propdef-view-timeline-inset)?
 
-Animations can be attached to [scroll-driven timelines](#scroll-driven-timelines) using the [scroll-timeline](#propdef-scroll-timeline) property (in CSS) or the `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)` parameters (in the Web Animations API). The timeline range to which their [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) is attached can also be further restricted to a particular timeline range (see [Attaching Animations to Timeline Ranges](#named-range-animation-declaration)).
+## 4.1 Присоединение анимации к временной шкале с прокруткой
 
-Time-based delays ([animation-delay](https://www.w3.org/TR/css-animations-1/#propdef-animation-delay)) do not apply to [scroll-driven animations](#scroll-driven-animations), which are distance-based.
+Анимации могут быть привязаны к [scroll-driven timelines](#scroll-driven-timelines) с помощью свойства [scroll-timeline](#propdef-scroll-timeline) (в CSS) или параметров `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)` (в Web Animations API). Диапазон временной шкалы, к которому привязан их [активный интервал](https://www.w3.org/TR/web-animations-1/#active-interval), также может быть дополнительно ограничен определенным диапазоном временной шкалы (см. раздел [Прикрепление анимаций к диапазонам временной шкалы](#named-range-animation-declaration)).
 
-### 4.1. Finite Timeline Calculations[](#finite-attachment)
+Задержки, основанные на времени ([animation-delay](https://www.w3.org/TR/css-animations-1/#propdef-animation-delay)), не применяются к [scroll-driven-animations](#scroll-driven-animations), которые основаны на расстоянии.
 
-Unlike time-driven timelines, [scroll-driven timelines](#scroll-driven-timelines) are finite, thus [scroll-driven animations](#scroll-driven-animations) are always attached to a finite [attachment range](#animation-attachment-range)—which may be further limited by [animation-range](#propdef-animation-range) (see [Appendix A: Timeline Ranges](#timeline-ranges)). The animation’s
+### 4.1. Расчеты на конечных временных интервалах
 
-iterations ([animation-iteration-count](https://www.w3.org/TR/css-animations-1/#propdef-animation-iteration-count)) are set within the limits of this finite range. If the specified duration is [auto](https://drafts.csswg.org/css-animations-2/#valdef-animation-duration-auto), then the remaining range is divided by its [iteration count](https://www.w3.org/TR/web-animations-1/#iteration-count) (animation-iteration-count) to find the [used](https://www.w3.org/TR/css-cascade-5/#used-value) duration.
-
+В отличие от временных шкал, [scroll-driven timelines](#scroll-driven-timelines) конечны, поэтому [scroll-driven-анимации](#scroll-driven-animations) всегда привязаны к конечному [attachment range](#animation-attachment-range)-который может быть дополнительно ограничен [animation-range](#propdef-animation-range) (см. [Appendix A: Timeline Ranges](#timeline-ranges)). Количество итераций ([animation-iteration-count](https://www.w3.org/TR/css-animations-1/#propdef-animation-iteration-count)) задается в пределах этого конечного диапазона. Если заданная длительность равна [auto](https://drafts.csswg.org/css-animations-2/#valdef-animation-duration-auto), то для нахождения [используемой](https://www.w3.org/TR/css-cascade-5/#used-value) длительности оставшийся диапазон делится на ее [количество итераций](https://www.w3.org/TR/web-animations-1/#iteration-count) (animation-iteration-count).
 Note: If the animation has an infinite [iteration count](https://www.w3.org/TR/web-animations-1/#iteration-count), each [iteration duration](https://www.w3.org/TR/web-animations-1/#iteration-duration)—and the resulting [active duration](https://www.w3.org/TR/web-animations-1/#active-duration)—will be zero.
 
-Animations that include absolutely-positioned keyframes (those pinned to a specific point on the timeline, e.g. using [named timeline range keyframe selectors](#named-range-keyframes) in [@keyframes](https://www.w3.org/TR/css-animations-1/#at-ruledef-keyframes)) are assumed to have an [iteration count](https://www.w3.org/TR/web-animations-1/#iteration-count) of 1 for the purpose of finding those keyframes’ positions relative to 0% and 100%; the entire animation is then scaled to fit the [iteration duration](https://www.w3.org/TR/web-animations-1/#iteration-duration) and repeated for each iteration.
+В анимации, включающей абсолютно позиционированные ключевые кадры (привязанные к определенной точке временной шкалы, например, с помощью [named timeline range keyframe selectors](#named-range-keyframes) в [@keyframes](https://www.w3.org/TR/css-animations-1/#at-ruledef-keyframes)), для определения положения ключевых кадров относительно 0% и 100% принимается [iteration count](https://www.w3.org/TR/web-animations-1/#iteration-count) равным 1; затем вся анимация масштабируется для соответствия [iteration duration](https://www.w3.org/TR/web-animations-1/#iteration-duration) и повторяется для каждой итерации.
 
-Note: It’s unclear what the use case might be for combining absolutely-positioned keyframes with iteration counts above 1; this at least gives a defined behavior. (An alternative, but perhaps weirder, behavior would be to take such absolutely-positioned keyframes “out of flow” while iterating the remaining keyframes.) The editors would be interested in hearing about any real use cases for multiple iterations here.
+Примечание: не совсем понятно, как можно использовать комбинацию абсолютно позиционированных ключевых кадров с числом итераций больше 1; это, по крайней мере, дает определенное поведение. (Альтернативным, но, возможно, более странным вариантом поведения было бы выведение таких абсолютно позиционированных ключевых кадров "из потока" при итерации остальных ключевых кадров). Редакторам было бы интересно узнать о реальных случаях использования нескольких итераций.
 
-### 4.2. Named Timeline Scoping and Lookup[](#timeline-scoping)
+### 4.2. Именованная временная шкала и поиск
 
-A named [scroll progress timeline](#scroll-progress-timelines) or [view progress timeline](#view-progress-timelines) is referenceable by:
+На именованный [scroll-progress-timelines](#scroll-progress-timelines) или [view progress timeline](#view-progress-timelines) можно ссылаться по:
 
-*   the name-declaring element itself
+* сам элемент, объявляющий имя
 
-*   that element’s descendants
+* потомки этого элемента
 
 
-Note: The [timeline-scope](#propdef-timeline-scope) property can be used to declare the name of a timeline on an ancestor of its defining element, effectively expanding its scope beyond that element’s subtree.
+> Примечание: Свойство [timeline-scope](#propdef-timeline-scope) может быть использовано для объявления имени временной шкалы на предке определяющего ее элемента, эффективно расширяя ее область действия за пределы поддерева этого элемента.
 
-If multiple elements have declared the same timeline name, the matching timeline is the one declared on the nearest element in tree order. In case of a name conflict on the same element, names declared later in the naming property ([scroll-timeline-name](#propdef-scroll-timeline-name), [view-timeline-name](#propdef-view-timeline-name)) take precedence, and [scroll progress timelines](#scroll-progress-timelines) take precedence over [view progress timelines](#view-progress-timelines).
+Если в нескольких элементах объявлено одно и то же имя временной шкалы, то совпадающей временной шкалой считается та, которая объявлена в ближайшем по порядку дереве элементе. В случае конфликта имен в одном и том же элементе приоритет имеют имена, объявленные позже в свойстве именования ([scroll-timeline-name](#propdef-scroll-timeline-name), [view-timeline-name](#propdef-view-timeline-name)), а [scroll progress timelines](#scroll-progress-timelines) имеет приоритет над [view progress timelines](#view-progress-timelines).
 
-[](#example-2a5405b2)Using timeline-scope, an element can refer to timelines bound to elements that are siblings, cousins, or even descendants. For example, the following creates an animation on an element that is linked to a [scroll progress timeline](#scroll-progress-timelines) defined by the subsequent sibling.
-
+> Используя timeline-scope, элемент может ссылаться на временные шкалы, привязанные к элементам, которые являются родными, двоюродными или даже потомками. Например, ниже создается анимация на элементе, который связан с [scroll progress timeline](#scroll-progress-timelines), определенным последующим братом или сестрой.
 ```
 <style>
   @keyframes anim {
@@ -562,79 +548,77 @@ If multiple elements have declared the same timeline name, the matching timeline
 ```
 
 
-### 4.3. Animation Events[](#events)
+### 4.3. События анимации
 
-[Scroll-driven animations](#scroll-driven-animations) dispatch all the same animation events as the more typical time-driven animations as described in [Web Animations § 4.4.18 Animation events](https://www.w3.org/TR/web-animations-1/#animation-events-section), [CSS Animations 1 § 4 Animation Events](https://www.w3.org/TR/css-animations-1/#events), and [CSS Animations 2 § 4.1 Event dispatch](https://www.w3.org/TR/css-animations-2/#event-dispatch).
+[Анимации с прокруткой](#scroll-driven-animations) вызывают все те же события анимации, что и более типичные анимации, управляемые временем, как описано в [Web Animations § 4.4.18 Animation events](https://www.w3.org/TR/web-animations-1/#animation-events-section), [CSS Animations 1 § 4 Animation Events](https://www.w3.org/TR/css-animations-1/#events) и [CSS Animations 2 § 4.1 Event dispatch](https://www.w3.org/TR/css-animations-2/#event-dispatch).
 
-Note: When scrolling backwards, the `animationstart` event will fire at the _end_ of the [active interval](https://www.w3.org/TR/web-animations-1/#active-interval), and the `animationend` event will fire at the start of the active interval. However, since the `finish` event is about entering the [finished play state](https://www.w3.org/TR/web-animations-1/#finished-play-state), it only fires when scrolling forwards.
+Примечание: При прокрутке назад событие `animationstart` срабатывает в _конце_ [активного интервала](https://www.w3.org/TR/web-animations-1/#active-interval), а событие `animationend` - в начале активного интервала. Однако, поскольку событие `finish` связано с переходом в состояние [finished play state] (https://www.w3.org/TR/web-animations-1/#finished-play-state), оно срабатывает только при прокрутке вперед.
 
-5\. Frame Calculation Details[](#frames)
+## 5. Детали расчета рамы
 ----------------------------------------
 
-### 5.1. HTML Processing Model: Event loop[](#html-processing-model-event-loop)
+### 5.1. Модель обработки HTML: Цикл событий
 
-The ability for scrolling to drive the progress of an animation, gives rise to the possibility of layout cycles, where a change to a scroll offset causes an animation’s effect to update, which in turn causes a new change to the scroll offset.
+Способность прокрутки управлять ходом анимации приводит к возникновению циклов компоновки, когда изменение смещения прокрутки приводит к обновлению эффекта анимации, что, в свою очередь, вызывает новое изменение смещения прокрутки.
 
-To avoid such [layout cycles](#layout-cycles), animations with a [scroll progress timeline](#scroll-progress-timelines) update their current time once during step 7.10 of the [HTML Processing Model](https://html.spec.whatwg.org/multipage/webappapis.html#processing-model-8) event loop, as step 1 of [update animations and send events](https://www.w3.org/TR/web-animations-1/#update-animations-and-send-events).
+Чтобы избежать таких циклов [layout cycles](#layout-cycles), анимации с [scroll progress timeline](#scroll-progress-timelines) обновляют свое текущее время один раз на шаге 7.10 цикла событий [HTML Processing Model](https://html.spec.whatwg.org/multipage/webappapis.html#processing-model-8), как шаг 1 [update animations and send events](https://www.w3.org/TR/web-animations-1/#update-animations-and-send-events).
 
-During step 7.14.1 of the [HTML Processing Model](https://html.spec.whatwg.org/multipage/webappapis.html#processing-model-8), any created [scroll progress timelines](#scroll-progress-timelines) or [view progress timelines](#view-progress-timelines) are collected into a stale timelines set. After step 7.14 if any timelines' [named timeline ranges](#named-timeline-range) have changed, these timelines are added to the [stale timelines](#stale-timelines) set. If there are any stale timelines, they now update their current time and associated ranges, the set of stale timelines is cleared and we run and we run an additional step to recalculate styles and update layout.
+На шаге 7.14.1 [HTML Processing Model](https://html.spec.whatwg.org/multipage/webappapis.html#processing-model-8) все созданные [scroll-progress timelines](#scroll-progress-timelines) или [view progress timelines](#view-progress-timelines) собираются в набор stale timelines. После шага 7.14, если [именованные диапазоны временных шкал](#named-timeline-range) каких-либо временных шкал изменились, эти шкалы добавляются в набор [stale timelines](#stale-timelines). Если есть устаревшие временные линии, то они теперь обновляют свое текущее время и связанные с ним диапазоны, набор устаревших временных линий очищается, и мы выполняем дополнительный шаг для пересчета стилей и обновления макета.
 
-Note: We check for layout changes after dispatching any `[ResizeObserver](https://www.w3.org/TR/resize-observer-1/#resizeobserver)`s intentionally to take programmatically sized elements into account.
+> Примечание: Мы проверяем изменения макета после отправки любого `[ResizeObserver](https://www.w3.org/TR/resize-observer-1/#resizeobserver)`, специально для того, чтобы учесть программные размеры элементов.
 
-Note: As we only gather stale timelines during the first style and layout calculation, this can only directly cause one additional style recalculation. Other APIs which require another update should be checked in the same step and be updated at the same time.
+> Примечание: Поскольку мы собираем устаревшие временные шкалы только во время первого расчета стиля и макета, это может непосредственно вызвать только один дополнительный пересчет стиля. Другие API, требующие очередного обновления, должны быть проверены на том же этапе и обновлены одновременно.
 
-Note: Without this additional round of style and layout, [initially stale](https://www.w3.org/TR/scroll-animations-1/#initially-stale) timelines would remain stale (i.e. they would not have a current time) for the remainder of the frame where the timeline was created. This means that animations linked to such a timeline would not produce any effect value for that frame, which could lead to an undesirable initial "flash" in the rendered output.
+> Примечание: Без этого дополнительного цикла пересчета стилей и компоновки [изначально несвежие](https://www.w3.org/TR/scroll-animations-1/#initially-stale) временные шкалы останутся несвежими (т.е. не будут иметь текущего времени) до конца кадра, в котором была создана временная шкала. Это означает, что анимация, связанная с такой временной шкалой, не будет создавать никаких эффектов для этого кадра, что может привести к нежелательной начальной "вспышке" в визуализации.
 
-Note: This section has no effect on forced style and layout calculations triggered by `[getComputedStyle()](https://www.w3.org/TR/cssom-1/#dom-window-getcomputedstyle)` or similar. In other words, [initially stale](https://www.w3.org/TR/scroll-animations-1/#initially-stale) timelines are visible as such through those APIs.
+> Примечание: Данный раздел не влияет на принудительные вычисления стиля и компоновки, выполняемые с помощью `[getComputedStyle()](https://www.w3.org/TR/cssom-1/#dom-window-getcomputedstyle)` или аналогичных программ. Другими словами, [изначально неактуальные](https://www.w3.org/TR/scroll-animations-1/#initially-stale) временные шкалы видны как таковые через эти API.
 
-If the final style and layout update would result in a change in the time or scope (see [timeline-scope](#propdef-timeline-scope)) of any [scroll progress timelines](#scroll-progress-timelines) or [view progress timelines](#view-progress-timelines), they will not be re-sampled to reflect the new state until the next update of the rendering.
+Если окончательное обновление стиля и компоновки приведет к изменению времени или области видимости (см. [timeline-scope](#propdef-timeline-scope)) любых [scroll-progress-timelines](#scroll-progress-timelines) или [view progress timelines](#view-progress-timelines), то они не будут передискретизированы для отражения нового состояния до следующего обновления рендеринга.
 
-Nothing in this section is intended to require that scrolling block on layout or script. If a user agent normally composites frames where scrolling has occurred but the consequences of scrolling have not been fully propagated in layout or script (for example, `scroll` event listeners have not yet run), the user agent may likewise choose not to sample scroll-driven animations for that composited frame. In such cases, the rendered scroll offset and the state of a scroll-driven animation may be inconsistent in the composited frame.
+Ничто в этом разделе не требует, чтобы прокрутка блокировалась в макете или скрипте. Если пользовательский агент обычно компонует кадры, в которых произошла прокрутка, но последствия прокрутки не были полностью отражены в макете или сценарии (например, еще не были запущены слушатели события `scroll`), то пользовательский агент может также не делать выборку анимации, управляемой прокруткой, для этого компонуемого кадра. В таких случаях отрисованное смещение прокрутки и состояние анимации, управляемой прокруткой, в скомпонованном кадре могут быть несовместимы.
 
-6\. Privacy Considerations[](#privacy-considerations)
+## 6. Соображения конфиденциальности
 -----------------------------------------------------
 
-There are no known privacy impacts of the features in this specification.
+Неизвестно, какое влияние на конфиденциальность оказывают функции, представленные в данной спецификации.
 
-7\. Security Considerations[](#security-considerations)
+## 7. Security Considerations
 -------------------------------------------------------
 
-There are no known security impacts of the features in this specification.
+О влиянии функций, представленных в данной спецификации, на безопасность ничего не известно.
 
-Appendix A: Timeline Ranges[](#timeline-ranges)
+Приложение A: Временные диапазоны
 -----------------------------------------------
 
-[](#issue-79ed79d9)This section should move to CSS-ANIMATIONS-2 and WEB-ANIMATIONS-2.
+> Этот раздел следует перенести в разделы CSS-ANIMATIONS-2 и WEB-ANIMATIONS-2.
 
-This appendix introduces the concepts of [named timeline ranges](#named-timeline-range) and [animation attachment ranges](#animation-attachment-range) to [CSS Animations](https://www.w3.org/TR/css-animations/) and [Web Animations](https://www.w3.org/TR/web-animations/).
+В этом приложении вводятся понятия [именованные диапазоны временной шкалы](#named-timeline-range) и [диапазоны вложений анимации](#animation-attachment-range) в [CSS Animations](https://www.w3.org/TR/css-animations/) и [Web Animations](https://www.w3.org/TR/web-animations/).
 
-### Named Timeline Ranges[](#named-ranges)
+### Именованные диапазоны временной шкалы
 
-A named timeline range is a named segment of an animation [timeline](https://www.w3.org/TR/web-animations-1/#timeline). The start of the segment is represented as 0% progress through the range; the end of the segment is represented as 100% progress through the range. Multiple [named timeline ranges](#named-timeline-range) can be associated with a given timeline, and multiple such ranges can overlap. For example, the contain range of a [view progress timeline](#view-progress-timelines) overlaps with its cover range. Named timeline ranges are represented by the [<timeline-range-name>](#typedef-timeline-range-name) value type, which indicates a [CSS identifier](https://www.w3.org/TR/css-values-4/#css-css-identifier) representing one of the predefined named timeline ranges.
+Именованный диапазон временной шкалы - это именованный сегмент анимации [timeline](https://www.w3.org/TR/web-animations-1/#timeline). Начало сегмента представлено как 0% прогресса по диапазону; конец сегмента представлен как 100% прогресса по диапазону. С данной временной шкалой может быть связано несколько [именованных диапазонов временной шкалы](#named-timeline-range), причем несколько таких диапазонов могут пересекаться. Например, диапазон contain временной шкалы [view progress timeline](#view-progress-timelines) перекрывается с ее диапазоном cover. Именованные временные диапазоны представлены типом значения [<timeline-range-name>](#typedef-timeline-range-name), который указывает на [CSS-идентификатор](https://www.w3.org/TR/css-values-4/#css-css-identifier), представляющий один из предопределенных именованных временных диапазонов.
 
-Note: In this specification, [named timeline ranges](#named-timeline-range) must be defined to exist by a specification such as [\[SCROLL-ANIMATIONS-1\]](#biblio-scroll-animations-1 "Scroll-driven Animations"). A future level may introduce APIs for authors to declare their own custom named timeline ranges.
+> Примечание: В данной спецификации [именованные диапазоны временной шкалы](#named-timeline-range) должны быть определены для существования спецификацией, такой как [\[SCROLL-ANIMATIONS-1\]](#biblio-scroll-animations-1 "Scroll-driven Animations"). На будущем уровне могут появиться API, позволяющие авторам объявлять свои собственные именованные диапазоны временной шкалы.
 
-### Named Timeline Range Keyframe Selectors[](#named-range-keyframes)
+### Именованные селекторы ключевых кадров диапазона временной шкалы
 
-[Named timeline range](#named-timeline-range) names and percentages can be used to attach keyframes to specific progress points within the named timeline range. The CSS [@keyframes](https://www.w3.org/TR/css-animations-1/#at-ruledef-keyframes) rule is extended thus:
+Имена и проценты [Named timeline range](#named-timeline-range) могут быть использованы для прикрепления ключевых кадров к определенным точкам выполнения в пределах именованного временного диапазона. Правило CSS [@keyframes](https://www.w3.org/TR/css-animations-1/#at-ruledef-keyframes) расширяется таким образом:
 
 ```
 <keyframe-selector> = from | to | <percentage [0,100]> | <timeline-range-name> <percentage>
-
 ```
 
+где [<имя временного диапазона>](#typedef-timeline-range-name) - это [CSS-идентификатор](https://www.w3.org/TR/css-values-4/#css-css-identifier), который представляет выбранный предопределенный [именованный временной диапазон](#named-timeline-range), а [<процент>](https://www.w3.org/TR/css-values-4/#percentage-value) после него представляет собой процентное продвижение между началом и концом этого именованного временного диапазона.
 
-where [<timeline-range-name>](#typedef-timeline-range-name) is the [CSS identifier](https://www.w3.org/TR/css-values-4/#css-css-identifier) that represents a chosen predefined [named timeline range](#named-timeline-range), and the [<percentage>](https://www.w3.org/TR/css-values-4/#percentage-value) after it represents the percentage progress between the start and end of that named timeline range.
+Ключевые кадры привязываются к указанной точке временной шкалы. Если временная шкала не имеет соответствующего [named timeline range](#named-timeline-range), то все ключевые кадры, прикрепленные к точкам в этом именованном диапазоне временной шкалы, игнорируются. Возможно, что эти точки привязки находятся за пределами [активного интервала](https://www.w3.org/TR/web-animations-1/#active-interval) анимации; в этом случае автоматические ключевые кадры от (0%) и [до](https://drafts.csswg.org/css-shapes-2/#valdef-shape-to) (100%) генерируются только для тех свойств, которые не имеют ключевых кадров на или раньше 0% или на или позже 100% (соответственно).
 
-Keyframes are attached to the specified point in the timeline. If the timeline does not have a corresponding [named timeline range](#named-timeline-range), then any keyframes attached to points on that named timeline range are ignored. It is possible that these attachment points are outside the [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) of the animation; in these cases the automatic from (0%) and [to](https://drafts.csswg.org/css-shapes-2/#valdef-shape-to) (100%) keyframes are only generated for properties that don’t have keyframes at or earlier than 0% or at or after 100% (respectively).
+### Прикрепление анимации к диапазонам временной шкалы
 
-### Attaching Animations to Timeline Ranges[](#named-range-animation-declaration)
+Набор ключевых кадров анимации может быть привязан к диапазону привязки анимации, ограничивая [активный интервал](https://www.w3.org/TR/web-animations-1/#active-interval) анимации этим диапазоном временной шкалы с помощью свойства [animation-range](#propdef-animation-range). Задержки (см. [animation-delay](https://www.w3.org/TR/css-animations-1/#propdef-animation-delay)) устанавливаются в этом ограниченном диапазоне, что еще больше сокращает время, доступное для [auto](https://drafts.csswg.org/css-animations-2/#valdef-animation-duration-auto) длительностей и [infinite](https://www.w3.org/TR/css-animations-1/#valdef-animation-iteration-count-infinite) итераций.
 
-A set of animation keyframes can be attached in reference to an animation attachment range, restricting the animation’s [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) to that range of a timeline, with the [animation-range](#propdef-animation-range) properties. Delays (see [animation-delay](https://www.w3.org/TR/css-animations-1/#propdef-animation-delay)) are set within this restricted range, further reducing the time available for [auto](https://drafts.csswg.org/css-animations-2/#valdef-animation-duration-auto) durations and [infinite](https://www.w3.org/TR/css-animations-1/#valdef-animation-iteration-count-infinite) iterations.
+> Примечание: [animation-range](#propdef-animation-range) может как расширять диапазон [attachment range](#animation-attachment-range), так и сужать его.
 
-Note: [animation-range](#propdef-animation-range) can expand the [attachment range](#animation-attachment-range) as well as constrict it.
-
-Any frames positioned outside the [attachment range](#animation-attachment-range) are used for interpolation as needed, but are outside the [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) and therefore dropped from the animation itself, effectively truncating the animation at the end of its attachment range.
+Кадры, расположенные за пределами [диапазона вложения](#animation-attachment-range), используются для интерполяции по мере необходимости, но находятся за пределами [активного интервала](https://www.w3.org/TR/web-animations-1/#active-interval) и поэтому выпадают из самой анимации, фактически обрывая ее в конце диапазона вложения.
 
 ```
 range start┐             ╺┉┉active interval┉┉╸           ┌range end
@@ -645,11 +629,11 @@ range start┐             ╺┉┉active interval┉┉╸           ┌range 
 ```
 
 
-The [animation-range](#propdef-animation-range) properties are [reset-only sub-properties](https://www.w3.org/TR/css-cascade-5/#reset-only-sub-property) of the [animation](https://www.w3.org/TR/css-animations-1/#propdef-animation) [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property).
+Свойства [animation-range](#propdef-animation-range) являются [только сбрасываемыми подсвойствами](https://www.w3.org/TR/css-cascade-5/#reset-only-sub-property) [animation](https://www.w3.org/TR/css-animations-1/#propdef-animation) [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property).
 
-[](#issue-6cb6bdf3)Define application to time-driven animations.
+Определите применение к анимации, управляемой временем.
 
-#### Specifying an Animation’s Timeline Range: the [animation-range](#propdef-animation-range) shorthand[](#animation-range)
+#### Указание диапазона временной шкалы анимации: сокращение [animation-range](#propdef-animation-range)
 
 
 |Name:                 |animation-range                                              |
@@ -664,11 +648,11 @@ The [animation-range](#propdef-animation-range) properties are [reset-only sub-p
 |Canonical order:      |per grammar                                                  |
 
 
-The [animation-range](#propdef-animation-range) property is a [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property) that sets [animation-range-start](#propdef-animation-range-start) and [animation-range-end](#propdef-animation-range-end) together in a single declaration, associating the animation with the specified [animation attachment range](#animation-attachment-range).
+Свойство [animation-range](#propdef-animation-range) - это [сокращение](https://www.w3.org/TR/css-cascade-5/#shorthand-property), которое задает [animation-range-start](#propdef-animation-range-start) и [animation-range-end](#propdef-animation-range-end) вместе в одном объявлении, связывая анимацию с указанным [диапазоном вложений анимации](#animation-attachment-range).
 
-If [<'animation-range-end'>](#propdef-animation-range-end) is omitted and [<'animation-range-start'>](#propdef-animation-range-start) includes a [<timeline-range-name>](#typedef-timeline-range-name) component, then animation-range-end is set to that same <timeline-range-name> and 100%. Otherwise, any omitted [longhand](https://www.w3.org/TR/css-cascade-5/#longhand) is set to its [initial value](https://www.w3.org/TR/css-cascade-5/#initial-value).
+Если [<'animation-range-end'>](#propdef-animation-range-end) опущен и [<'animation-range-start'>](#propdef-animation-range-start) включает компонент [<timeline-range-name>](#typedef-timeline-range-name), то animation-range-end устанавливается на тот же <timeline-range-name> и 100%. В противном случае для любого опущенного [длинного диапазона](https://www.w3.org/TR/css-cascade-5/#longhand) устанавливается его [начальное значение](https://www.w3.org/TR/css-cascade-5/#initial-value).
 
-[](#example-7788feda)The following sets of declarations show an [animation-range](#propdef-animation-range) [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property) declaration followed by its equivalent [animation-range-start](#propdef-animation-range-start) and [animation-range-end](#propdef-animation-range-end) declarations:
+Следующие наборы деклараций показывают декларацию [animation-range](#propdef-animation-range) [shorthand](https://www.w3.org/TR/css-cascade-5/#shorthand-property), за которой следуют эквивалентные ей декларации [animation-range-start](#propdef-animation-range-start) и [animation-range-end](#propdef-animation-range-end):
 
 ```
 animation-range: entry 10% exit 90%;
@@ -706,10 +690,9 @@ animation-range-end: 90%;
 ```
 
 
-[](#issue-e4fe9011)What’s the best way to handle defaulting of omitted values here? [\[Issue #8438\]](https://github.com/w3c/csswg-drafts/issues/8438)
+Как лучше всего обрабатывать умолчания о пропущенных значениях? [\[Issue #8438\]](https://github.com/w3c/csswg-drafts/issues/8438)
 
-#### Specifying an Animation’s Timeline Range Start: the [animation-range-start](#propdef-animation-range-start) property[](#animation-range-start)
-
+#### Указание начала временного диапазона анимации: свойство [animation-range-start](#propdef-animation-range-start)
 
 
 * Name:      : Value:
@@ -730,24 +713,23 @@ animation-range-end: 90%;
     * animation-range-start     : not animatable
 
 
-Specifies the start of the animations’s [attachment range](#animation-attachment-range), shifting the [start time](https://www.w3.org/TR/web-animations-1/#animation-start-time) of the animation (i.e. where keyframes mapped to 0% progress are attached when the iteration count is 1) accordingly.
+Определяет начало диапазона [прикрепления](#animation-attachment-range) анимации, соответственно сдвигая [время начала](https://www.w3.org/TR/web-animations-1/#animation-start-time) анимации (т.е. место прикрепления ключевых кадров, сопоставленных с 0% прогресса, когда счетчик итераций равен 1).
 
-Values have the following meanings:
+Значения имеют следующие значения:
 
-normal
+**normal**
 
-The start of the animation’s [attachment range](#animation-attachment-range) is the start of its associated [timeline](https://www.w3.org/TR/web-animations-1/#timeline); the start of the animation’s [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) is determined as normal.
+Началом [диапазона вложений](#animation-attachment-range) анимации является начало связанной с ней [временной шкалы](https://www.w3.org/TR/web-animations-1/#timeline); начало [активного интервала](https://www.w3.org/TR/web-animations-1/#active-interval) анимации определяется обычным образом.
 
 [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)[](#valdef-animation-range-start-length-percentage)
 
-The [animation attachment range](#animation-attachment-range) starts at the specified point on the [timeline](https://www.w3.org/TR/web-animations-1/#timeline) measuring from the start of the timeline.
+Диапазон привязки [анимации](#animation-attachment-range) начинается в указанной точке на [временной шкале](https://www.w3.org/TR/web-animations-1/#timeline), измеряемой от начала временной шкалы.
 
 [<timeline-range-name>](#typedef-timeline-range-name) [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)?[](#valdef-animation-range-start-timeline-range-name-length-percentage)
 
-The [animation attachment range](#animation-attachment-range) starts at the specified point on the [timeline](https://www.w3.org/TR/web-animations-1/#timeline) measuring from the start of the specified [named timeline range](#named-timeline-range). If the [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage) is omitted, it defaults to 0%.
+Диапазон [прикрепления анимации](#animation-attachment-range) начинается в указанной точке на [временной шкале](https://www.w3.org/TR/web-animations-1/#timeline), отсчитываемой от начала указанного [именованного диапазона временной шкалы](#named-timeline-range). Если параметр [<длительность-процент>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage) опущен, то по умолчанию он принимает значение 0%..
 
-#### Specifying an Animation’s Timeline Range End: the [animation-range-end](#propdef-animation-range-end) property[](#animation-range-end)
-
+#### Указание конца временного диапазона анимации: свойство [animation-range-end](#propdef-animation-range-end)
 
 
 * Name:      : Value:
@@ -768,25 +750,25 @@ The [animation attachment range](#animation-attachment-range) starts at the spec
     * animation-range-end     : not animatable
 
 
-Specifies the end of the animations’s [attachment range](#animation-attachment-range), potentially shifting the [end time](https://www.w3.org/TR/web-animations-1/#end-time) of the animation (i.e. where keyframes mapped to 100% progress are attached when the iteration count is 1) and/or truncating the animation’s [active interval](https://www.w3.org/TR/web-animations-1/#active-interval).
+Определяет конец диапазона привязки анимации [attachment range](#animation-attachment-range), потенциально смещая [end time](https://www.w3.org/TR/web-animations-1/#end-time) анимации (т.е. когда ключевые кадры, привязанные к 100% прогресса, привязываются при количестве итераций, равном 1) и/или усекая [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) анимации.
 
-Values have the following meanings:
+Значения имеют следующие значения:
 
-normal
+**normal**
 
-The end of the animation’s [attachment range](#animation-attachment-range) is the end of its associated [timeline](https://www.w3.org/TR/web-animations-1/#timeline); the end of the animation’s [active interval](https://www.w3.org/TR/web-animations-1/#active-interval) is determined as normal.
+Конец [диапазона вложений](#animation-attachment-range) анимации является концом связанной с ней [временной шкалы](https://www.w3.org/TR/web-animations-1/#timeline); конец [активного интервала](https://www.w3.org/TR/web-animations-1/#active-interval) анимации определяется обычным образом.
 
 [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)[](#valdef-animation-range-end-length-percentage)
 
-The [animation attachment range](#animation-attachment-range) ends at the specified point on the [timeline](https://www.w3.org/TR/web-animations-1/#timeline) measuring from the start of the timeline.
+Диапазон привязки [анимации](#animation-attachment-range) заканчивается в указанной точке на [временной шкале](https://www.w3.org/TR/web-animations-1/#timeline), отсчитываемой от начала временной шкалы.
 
 [<timeline-range-name>](#typedef-timeline-range-name) [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage)?[](#valdef-animation-range-end-timeline-range-name-length-percentage)
 
-The [animation attachment range](#animation-attachment-range) ends at the specified point on the [timeline](https://www.w3.org/TR/web-animations-1/#timeline) measuring from the start of the specified [named timeline range](#named-timeline-range). If the [<length-percentage>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage) is omitted, it defaults to 100%.
+Диапазон [прикрепления анимации](#animation-attachment-range) заканчивается в указанной точке [временной шкалы](https://www.w3.org/TR/web-animations-1/#timeline), отсчитываемой от начала указанного [именованного диапазона временной шкалы](#named-timeline-range). Если параметр [<длительность-процент>](https://www.w3.org/TR/css-values-4/#typedef-length-percentage) опущен, то по умолчанию он принимает значение 100%.
 
-### Reporting Timeline Range Progress: the getCurrentTime() method[](#named-range-get-time)
+### Отчет о ходе выполнения диапазона временной шкалы: метод getCurrentTime()
 
-Progress through named ranges is exposed on the `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)` object by the `[getCurrentTime()](#dom-animationtimeline-getcurrenttime)` method:
+Продвижение по именованным диапазонам осуществляется на объекте `[AnimationTimeline](https://www.w3.org/TR/web-animations-1/#animationtimeline)` методом `[getCurrentTime()](#dom-animationtimeline-getcurrenttime)`:
 
 ```
 dictionary AnimationTimeOptions {
@@ -803,37 +785,36 @@ partial interface AnimationTimeline {
 
 `CSSNumericValue? getCurrentTime(optional AnimationCurrentTimeOptions = {})`
 
-Returns a representation of the [current time](https://www.w3.org/TR/web-animations-1/#timeline-current-time) as follows:
+Возвращает представление [текущего времени](https://www.w3.org/TR/web-animations-1/#timeline-current-time) в следующем виде:
 
-If `[range](#dom-animationtimeoptions-range)` is not provided:
+Если `[range](#dom-animationtimeoptions-range)` не указан:
 
-Returns the value of `[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` on [this](https://webidl.spec.whatwg.org/#this), but representing millisecond values as a new `[CSSUnitValue](https://www.w3.org/TR/css-typed-om-1/#cssunitvalue)` in [ms](https://www.w3.org/TR/css-values-4/#ms) units rather than as a double.
+Возвращает значение `[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` на [this](https://webidl.spec.whatwg.org/#this), но представляет миллисекундные значения не в виде double, а в виде нового `[CSSUnitValue](https://www.w3.org/TR/css-typed-om-1/#cssunitvalue)` в единицах [ms](https://www.w3.org/TR/css-values-4/#ms).
 
-If `[range](#dom-animationtimeoptions-range)` is provided and is a valid [named timeline range](#named-timeline-range) on [this](https://webidl.spec.whatwg.org/#this):
+Если указан `[диапазон](#dom-animationtimeoptions-range)` и он является допустимым [named timeline range](#named-timeline-range) на [this](https://webidl.spec.whatwg.org/#this):
 
-Let progress be the current progress through that range, expressed as a percentage value.
+Пусть progress - текущий прогресс по этому диапазону, выраженный в процентах.
 
-Create a [new unit value](https://drafts.css-houdini.org/css-typed-om-1/#create-a-cssunitvalue-from-a-pair) from (progress, "percent") and return it.
+Создать [новое значение единицы измерения](https://drafts.css-houdini.org/css-typed-om-1/#create-a-cssunitvalue-from-a-pair) из (progress, "percent") и вернуть его.
 
-If the start and end points of the [named timeline range](#named-timeline-range) coincide, return negative infinity for time values earlier or equal to that point, and positive infinity for time values after it.
+Если начальная и конечная точки [именованного диапазона временной шкалы](#named-timeline-range) совпадают, то для значений времени, более ранних или равных этой точке, возвращается отрицательная бесконечность, а для значений времени после нее - положительная бесконечность.
 
-If `[range](#dom-animationtimeoptions-range)` is provided but is not a valid [named timeline range](#named-timeline-range) on [this](https://webidl.spec.whatwg.org/#this):
+Если указано `[range](#dom-animationtimeoptions-range)`, но оно не является действительным [named timeline range](#named-timeline-range) на [this](https://webidl.spec.whatwg.org/#this):
 
-Returns null.
+Возвращает null.
 
-[](#issue-615b83f7)This method is related to `[currentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)` but not quite the same; should it have a different name? [\[Issue #8201\]](https://github.com/w3c/csswg-drafts/issues/8201)
+> Этот метод связан с `[CurrentTime](https://www.w3.org/TR/web-animations-1/#dom-animationtimeline-currenttime)`, но не совсем то же самое; должно ли у него быть другое название? [\[Выпуск #8201\]](https://github.com/w3c/csswg-drafts/issues/8201)
 
-[](#issue-8f9cc3f0)This method returns percentages relative to a ScrollTimeline’s range when a range name is provided. But for time-based timelines, if a range name is provided, should it return percentage progress through that range, or time progress through that range?
+Этот метод возвращает проценты относительно диапазона ScrollTimeline, если указано имя диапазона. Но для временных линий, основанных на времени, если указано имя диапазона, следует возвращать процентное продвижение по этому диапазону или временное продвижение по этому диапазону?
 
-Appendix B: Timeline Name Scope[](#timeline-name-scope)
+Приложение Б: Сроки Наименование Область применения
 -------------------------------------------------------
 
-[](#issue-be490712)This section should move to CSS-ANIMATIONS-2.
+> Этот раздел следует перенести в раздел CSS-ANIMATIONS-2.
 
-This appendix introduces the [timeline-scope](#propdef-timeline-scope) property, which allows declaring a timeline name’s scope on an ancestor of the timeline’s defining element.
+В данном приложении введено свойство [timeline-scope](#propdef-timeline-scope), которое позволяет объявить область видимости имени временной шкалы на предке определяющего элемента временной шкалы.
 
-### Declaring a Named Timeline’s Scope: the [timeline-scope](#propdef-timeline-scope) property[](#timeline-scope)
-
+### Объявление области действия именованной временной шкалы: свойство [timeline-scope](#propdef-timeline-scope)
 
 |Name:                 |timeline-scope                                     |
 |----------------------|---------------------------------------------------|
@@ -847,56 +828,18 @@ This appendix introduces the [timeline-scope](#propdef-timeline-scope) property,
 |Animation type:       |not animatable                                     |
 
 
-This property declares the scope of the specified timeline names to extend across this element’s subtree. This allows a named timeline (such as a [named scroll progress timeline](#named-scroll-progress-timelines) or [named view progress timeline](#named-view-progress-timelines)) to be referenced by elements outside the timeline-defining element’s subtree—for example, by siblings, cousins, or ancestors. It also blocks descendant timelines with the specified names from being referenced from outside this subtree, and ancestor timelines with the specified names from being referenced within this subtree.
-
+Это свойство определяет область видимости указанных имен временных шкал, которая распространяется на все поддерево этого элемента. Это позволяет именованной временной шкале (например, [named scroll-progress timeline](#named-scroll-progress-timelines) или [named view progress timeline](#named-view-progress-timelines)) ссылаться на элементы вне поддерева определяющего временную шкалу элемента - например, на братьев, сестер, двоюродных братьев или предков. Также блокируются ссылки на временные шкалы потомков с указанными именами извне этого поддерева и ссылки на временные шкалы предков с указанными именами внутри этого поддерева.
 [](#issue-73eb8d88)There’s some open discussion about these blocking effects. [\[Issue #8915\]](https://github.com/w3c/csswg-drafts/issues/8915)
 
-Values have the following meanings:
+Значения имеют следующие значения:
 
-none
+**none**
 
-No changes in timeline name scope.
+Изменений в области наименований сроков нет.
 
-[<dashed-ident>](https://www.w3.org/TR/css-values-4/#typedef-dashed-ident)[](#valdef-timeline-scope-dashed-ident)
+[<dashed-ident>](https://www.w3.org/TR/css-values-4/#typedef-dashed-ident)
+Объявляет имя соответствующей именованной временной шкалы, определенной потомком, область видимости которой еще не объявлена потомком с помощью [timeline-scope](#propdef-timeline-scope), областью видимости для данного элемента и его потомков.
 
-Declares the name of a matching named timeline defined by a descendant—whose scope is not already explicitly declared by a descendant using [timeline-scope](#propdef-timeline-scope)—to be in scope for this element and its descendants.
+Если такой временной шкалы не существует или существует несколько таких шкал, то вместо нее объявляется [неактивная временная шкала](https://www.w3.org/TR/web-animations-1/#inactive-timeline) с указанным именем.
 
-If no such timeline exists, or if more than one such timeline exists, instead declares an [inactive timeline](https://www.w3.org/TR/web-animations-1/#inactive-timeline) with the specified name.
-
-Note: This property cannot affect or invalidate any timeline name lookups within the subtree of a descendant element that declares the same name. See [Declaring a Named Timeline’s Scope: the timeline-scope property](#timeline-scope).
-
-8\. Changes[](#changes)
------------------------
-
-Changes since the previous ([28 April 2023](https://www.w3.org/TR/2023/WD-scroll-animations-1-20230428/)) Working Draft include:
-
-*   Removed scroll-timeline-attachment and view-timeline-attachment in favor of [timeline-scope](#propdef-timeline-scope). ([Issue 7759](https://github.com/w3c/csswg-drafts/issues/7759))
-
-*   Switched named timelines to use [<dashed-ident>](https://www.w3.org/TR/css-values-4/#typedef-dashed-ident) instead of [<custom-ident>](https://www.w3.org/TR/css-values-4/#identifier-value) in order to avoid name clashes with standard CSS keywords. ([Issue 8746](https://github.com/w3c/csswg-drafts/issues/8746))
-
-
-See also [Earlier Changes](https://www.w3.org/TR/2023/WD-scroll-animations-1-20230428/#changes).
-
-Conformance requirements are expressed with a combination of descriptive assertions and RFC 2119 terminology. The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in the normative parts of this document are to be interpreted as described in RFC 2119. However, for readability, these words do not appear in all uppercase letters in this specification.
-
-All of the text of this specification is normative except sections explicitly marked as non-normative, examples, and notes. [\[RFC2119\]](#biblio-rfc2119 "Key words for use in RFCs to Indicate Requirement Levels")
-
-Examples in this specification are introduced with the words “for example” or are set apart from the normative text with `class="example"`, like this:
-
-Informative notes begin with the word “Note” and are set apart from the normative text with `class="note"`, like this:
-
-Note, this is an informative note.
-
-Advisements are normative sections styled to evoke special attention and are set apart from other normative text with `<strong class="advisement">`, like this: **UAs MUST provide an accessible alternative.**
-
-A style sheet is conformant to this specification if all of its statements that use syntax defined in this module are valid according to the generic CSS grammar and the individual grammars of each feature defined in this module.
-
-A renderer is conformant to this specification if, in addition to interpreting the style sheet as defined by the appropriate specifications, it supports all the features defined by this specification by parsing them correctly and rendering the document accordingly. However, the inability of a UA to correctly render a document due to limitations of the device does not make the UA non-conformant. (For example, a UA is not required to render color on a monochrome monitor.)
-
-An authoring tool is conformant to this specification if it writes style sheets that are syntactically correct according to the generic CSS grammar and the individual grammars of each feature in this module, and meet all other conformance requirements of style sheets as described in this module.
-
-So that authors can exploit the forward-compatible parsing rules to assign fallback values, CSS renderers **must** treat as invalid (and [ignore as appropriate](https://www.w3.org/TR/CSS21/conform.html#ignore)) any at-rules, properties, property values, keywords, and other syntactic constructs for which they have no usable level of support. In particular, user agents **must not** selectively ignore unsupported component values and honor supported values in a single multi-value property declaration: if any value is considered invalid (as unsupported values must be), CSS requires that the entire declaration be ignored.
-
-Once a specification reaches the Candidate Recommendation stage, non-experimental implementations are possible, and implementors should release an unprefixed implementation of any CR-level feature they can demonstrate to be correctly implemented according to spec.
-
-To establish and maintain the interoperability of CSS across implementations, the CSS Working Group requests that non-experimental CSS renderers submit an implementation report (and, if necessary, the testcases used for that implementation report) to the W3C before releasing an unprefixed implementation of any CSS features. Testcases submitted to W3C are subject to review and correction by the CSS Working Group.
+> Примечание: Это свойство не может повлиять на поиск имени временной шкалы в поддереве элемента-потомка, объявившего такое же имя, или сделать его недействительным. См. раздел [Объявление области действия именованной временной шкалы: свойство timeline-scope](#timeline-scope).
