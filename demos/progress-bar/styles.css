@@ -30,6 +30,13 @@ body {
   font-family: sans-serif;
   font-size: 20px;
   line-height: 1.5;
+  margin-inline: 20px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 main {
